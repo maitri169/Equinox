@@ -1,0 +1,962 @@
+#include<iostream>
+#include<vector>
+#include<string>
+#include<unordered_map>
+#include<ctime>
+#include <algorithm>
+
+
+using namespace std;
+
+
+
+class User_s //User registeration
+{
+    private:
+    string m_username;
+    string m_password;
+    
+    public:
+    User_s(const string& username, const string& password) 
+        : m_username(username), m_password(password) {}
+
+    const string& getUsername() const { return m_username; }
+    const string& getPassword() const { return m_password; }
+};
+
+struct User { 
+    int id;
+    string name;
+    string email;
+};
+
+struct book_detail {
+    string author;
+    string title;
+    string isbn;
+};
+
+class admin {//Admin Login
+    private:// set valid username and password
+    vector<User> users;
+    vector<book_detail> book;   
+    string username = "admin";
+    string password = "admin78";
+
+   public:
+    admin()=default;
+    admin(const string& username, const string& password) 
+        : username(username), password(password) {}
+
+    const string& getUsername() const { return username; }
+    const string& getPassword() const { return password; }
+
+     void control(){
+        cout<<"\t\t1. Add User"<<endl;
+        cout<<"\t\t2. Delete User"<<endl;
+        cout<<"\t\t3. Add Book"<<endl;
+        cout<<"\t\t4. Delete  Book"<<endl;
+
+        int options;
+        cout<<"\n\tSelect an Option (1-4): "<<endl;
+        cin>>options;
+
+        if (options==1){
+        //Add User
+         User newUser;
+        cout << "\tEnter user ID: ";
+        cin >> newUser.id;
+        cout << "\tEnter user name: ";
+        cin.ignore();
+        cin>>newUser.name;
+        cout << "\tEnter user email: ";
+        cin>>newUser.email;
+        users.push_back(newUser);
+        cout << "\t\tUser added successfully.\n";}
+        
+
+        else if (options==2){
+
+        //Delete user
+        int userId;
+        cout << "\tEnter user ID to delete: ";
+        cin >> userId;
+        auto it = find_if(users.begin(), users.end(), [userId](User user) { return user.id == userId; });
+        if (it != users.end()) {
+            users.erase(it);
+            cout << "\tUser deleted successfully.\n";
+        } else {
+            cout << "\t\tUser with ID " << userId << " not found.\n";
+        }
+        }
+
+        else if (options==3){
+
+        //Add book
+        book_detail newBook;
+        cout << "\tEnter Book Title: ";
+        cin >> newBook.title;
+        cout << "\tEnter Book Author: ";
+        cin.ignore();
+        getline(cin, newBook.author);
+        cout << "\tEnter Book ISBN: ";
+        getline(cin, newBook.isbn);
+        book.push_back(newBook);
+        cout << "\t\tBook added successfully.\n";
+        }
+
+         else if (options==4){
+
+        //Delete book  
+        string isbn;
+        cout << "\tEnter Book ISBN to delete: ";
+        cin >> isbn;
+        auto it = find_if(book.begin(), book.end(), [isbn](book_detail book) { return book.isbn == isbn; });
+        if (it != book.end()) {
+            book.erase(it);
+            cout << "\tBook deleted successfully.\n";
+        } else {
+            cout << "\t\tBook with ISBN " << isbn << " not found.\n";
+        }
+    }
+        
+
+        else{
+            cout<<"\tSelect a valid Option :("<<endl;
+        }
+
+    }
+
+    
+};
+
+class LibrarySystem {//User login , register , feature , admin user
+private:
+unordered_map<string, User_s> m_users;
+vector<User> users;
+vector<book_detail> book;
+public:
+   void registerUser() {
+        string username, password;
+        cout << "\tEnter a username: ";
+        cin >> username;
+        cout << "\tEnter a password: ";
+        cin >> password;
+        m_users.emplace(username, User_s(username, password));
+        cout << "\t\tRegistration successful!\n";
+    }
+    
+
+    bool loginUser() {
+        string username, password;
+        cout << "\tEnter your username: ";
+        cin >> username;
+        cout << "\tEnter your password: ";
+        cin >> password;
+        auto it = m_users.find(username);
+        if (it == m_users.end()) {
+          cout << "\t\tUser not found.\n";
+            return false;
+        }
+        if (it->second.getPassword() != password) {
+            std::cout << "\tIncorrect password.\n";
+            return false;
+        }
+        cout << "\t\tLogin successful!\n";
+        return true;
+    }
+
+    bool adminUser(){
+
+  // prompt user to enter username and password
+    cout << "\tPlease enter your username: ";
+    string input_username ;
+    cin >> input_username;
+
+    cout << "\tPlease enter your password: ";
+    string input_password ;
+    cin >> input_password;
+    string username = "admin" ;
+    string password ="admin78";
+  // compare input credentials with valid credentials
+    if (input_username ==  username && input_password ==  password) {
+    // successful login, grant access to admin panel
+    cout << "\t\tLogin successful. Welcome! "<< endl;     
+     cout<<"\t\t1. Add User"<<endl;
+        cout<<"\t\t2. Delete User"<<endl;
+        cout<<"\t\t3. Add Book"<<endl;
+        cout<<"\t\t4. Delete  Book"<<endl;
+
+        int options;
+        cout<<"\n\tSelect an Option (1-4): "<<endl;
+        cin>>options;
+
+        if (options==1){
+        //Add User
+         User newUser;
+        cout << "\tEnter user ID: ";
+        cin >> newUser.id;
+        cout << "\tEnter user name: ";
+        cin.ignore();
+        cin>>newUser.name;
+        cout << "\tEnter user email: ";
+        cin>>newUser.email;
+        users.push_back(newUser);
+        cout << "\tUser added successfully.\n";}
+        
+
+        else if (options==2){
+
+        //Delete user
+        int userId;
+        cout << "\tEnter user ID to delete: ";
+        cin >> userId;
+        auto it = find_if(users.begin(), users.end(), [userId](User user) { return user.id == userId; });
+        if (it != users.end()) {
+            users.erase(it);
+            cout << "\t\tUser deleted successfully.\n";
+        } else {
+            cout << "\t\tUser with ID " << userId << " not found.\n";
+        }
+        }
+
+        else if (options==3){
+
+        //Add book
+        book_detail newBook;
+        cout << "\tEnter Book Title: ";
+        cin >> newBook.title;
+        cout << "\tEnter Book Author: ";
+        cin.ignore();
+        getline(cin, newBook.author);
+        cout << "\tEnter Book ISBN: ";
+        getline(cin, newBook.isbn);
+        book.push_back(newBook);
+        cout << "\t\tBook added successfully.\n";
+        }
+
+         else if (options==4){
+
+        //Delete book  
+        string isbn;
+        cout << "\tEnter Book ISBN to delete: ";
+        cin >> isbn;
+        auto it = find_if(book.begin(), book.end(), [isbn](book_detail book) { return book.isbn == isbn; });
+        if (it != book.end()) {
+            book.erase(it);
+            cout << "\t\tBook deleted successfully.\n";
+        } else {
+            cout << "\t\tBook with ISBN " << isbn << " not found.\n";
+        }
+    }
+    
+        else {
+            cout<<"\tSelect a valid Option :("<<endl;
+        }
+
+    
+
+     }
+    else {
+    // unsuccessful login, deny access
+    cout << "\t\tInvalid username or password. Access denied." << endl;
+     }
+   }};
+    
+class Book{
+public:
+Book()=default ;
+Book(string t) {
+        
+        this->title = title;
+        this->author = author;
+        this->isbn = isbn;
+        reserved = false;
+        checkedOut = false;}
+     
+     void BookInfo(string title, string author, string isbn  ) {
+        this->title = title;
+        this->author = author;
+        this->isbn = isbn;
+        this->available = true;
+        checkedOut = false;
+        reserved = false;      
+    }
+
+   
+
+    string get_title() {
+        return title;
+    }
+
+    string get_author() {
+        return author;
+    }
+
+    string get_isbn() {
+        return isbn;
+    }
+
+   
+    bool isCheckedOut() {
+            return checkedOut;
+        }
+
+     void checkOut() {
+            checkedOut = true;
+        }
+        
+    void checkIn() {
+            checkedOut = false;
+        }    
+
+    void setTitle(string t) {
+            title = t;
+        }
+        
+    void setAuthor(string a) {
+            author = a;
+        }    
+    
+    void setIsbn(string i){
+        isbn = i;
+    }
+
+    void Recommendation(){
+ cout<<"\tEnter Subject: "<<endl;
+ cout<<"\n\t1. Applied Mathematics-I"<<endl;
+ cout<<"\t2. Applied Physics-I"<<endl;
+ cout<<"\t3. Applied Chemistry"<<endl;
+ cout<<"\t4. Basic Electrical Engineering"<<endl;
+ cout<<"\t5. Programming in C language"<<endl;
+ 
+
+ int  subject_num;
+
+ cin >> subject_num;
+
+ if (subject_num == 1){
+    cout<< "\t\tBook recommendation for AM-I :"<<endl;
+    cout<<"\n\t1. Advanced Engineering Mathemetics by D.G. Zill and W.S. Wright"<<endl; 
+    cout<<"\t2. Advanced Engineering Mathemetics by R.K. Jain and Iyengar S.R.K"<<endl; 
+    cout<<"\t3. Advanced Engineering Mathemetics by Greenberg M."<<endl; 
+    cout<<"\t4. Higher Engineering Mathematics by Grewal , B.S."<<endl; 
+ }
+
+ else if (subject_num==2){
+    cout<< "\t\tBook recommendation for AP-I :"<<endl;
+    cout<<"\n\t1. Engineering Physics by H.K. Malik and A.K. Singh"<<endl; 
+    cout<<"\t2. Textbook of Engineering Physics by M.C. Jain"<<endl; 
+    cout<<"\t3. Engineering Physics by G. Aruldhas"<<endl; 
+    cout<<"\t4. Engineering Physics by Abhijit Nayak"<<endl; 
+ }
+
+ else if (subject_num==3){
+    cout<< "\t\tBook recommendation for Applied Chemistry :"<<endl;
+    cout<<"\n\t1. Textbook on Engineering Chemistry by S. Rattan"<<endl; 
+    cout<<"\t2. Engineering Chemistry by P.C. Jaain & M. Jain"<<endl; 
+    cout<<"\t3. The Elements of Physical Chemistry by P.W. Atkins"<<endl; 
+    cout<<"\t4. Essentials of Physical Chemistry by B.S. Bahl , G.D. Tuli , A. Bahl"<<endl; 
+ }
+
+ else if (subject_num==4){
+    cout<< "\t\tBook recommendation for BEE :"<<endl;
+    cout<<"\n\t1. Electrical Engineering Fundamentals by Vincent DEL TORO "<<endl; 
+    cout<<"\t2. Electric Circuits by J. Edminister , M. Nahvi"<<endl; 
+    cout<<"\t3. Engineering Circuit Analysis by Hayt , W.H., Kimmerly"<<endl; 
+    cout<<"\t4. Basic Electrical Engineering by Fitzgerald , Arthur Eugene"<<endl; 
+ }
+
+  else if (subject_num==5){
+    cout<< "\t\tBook recommendation for Programming in C language :"<<endl;
+    cout<<"\n\t1. C Programming Absolute Beginner's Guide by Greg Perry & Dean Miller"<<endl; 
+    cout<<"\t2. C: Complete Reference by Herbert Schildt "<<endl; 
+    cout<<"\t3. Head First C: A Brain-Friendly Guide by Griffiths David"<<endl; 
+    cout<<"\t4. C Programming Language by Brain W. Kernighan"<<endl; 
+ }
+
+ else{
+    cout<<"\t\tPlease select a valid option"<<endl;
+ }
+
+
+ }
+    
+    void list(){ 
+    
+    cout<<"\n\t1. Advanced Engineering Mathemetics by D.G. Zill and W.S. Wright"<<endl; 
+    cout<<"\t2. Advanced Engineering Mathemetics by R.K. Jain and Iyengar S.R.K"<<endl; 
+    cout<<"\t3. Advanced Engineering Mathemetics by Greenberg M."<<endl; 
+    cout<<"\t4. Higher Engineering Mathematics by Grewal , B.S."<<endl; 
+    cout<<"\t5. Engineering Physics by H.K. Malik and A.K. Singh"<<endl; 
+    cout<<"\t6. Textbook of Engineering Physics by M.C. Jain"<<endl; 
+    cout<<"\t7. Engineering Physics by G. Aruldhas"<<endl; 
+    cout<<"\t8. Engineering Physics by Abhijit Nayak"<<endl; 
+    cout<<"\t9. Textbook on Engineering Chemistry by S. Rattan"<<endl; 
+    cout<<"\t10. Engineering Chemistry by P.C. Jaain & M. Jain"<<endl; 
+    cout<<"\t11. The Elements of Physical Chemistry by P.W. Atkins"<<endl; 
+    cout<<"\t12. Essentials of Physical Chemistry by B.S. Bahl , G.D. Tuli , A. Bahl"<<endl; 
+    cout<<"\t13. Electrical Engineering Fundamentals by Vincent DEL TORO "<<endl; 
+    cout<<"\t14. Electric Circuits by J. Edminister , M. Nahvi"<<endl; 
+    cout<<"\t15. Engineering Circuit Analysis by Hayt , W.H., Kimmerly"<<endl; 
+    cout<<"\t16. Basic Electrical Engineering by Fitzgerald , Arthur Eugene"<<endl; 
+    cout<<"\t17. C Programming Absolute Beginner's Guide by Greg Perry & Dean Miller"<<endl; 
+    cout<<"\t18. C: Complete Reference by Herbert Schildt "<<endl; 
+    cout<<"\t19. Head First C: A Brain-Friendly Guide by Griffiths David"<<endl; 
+    cout<<"\t20. C Programming Language by Brain W. Kernighan"<<endl; 
+ }
+
+    bool isReserved() {
+        return reserved;
+    }
+
+    void reserve() {
+        reserved = true;
+    }
+
+    void unreserve() {
+        reserved = false;
+    }
+
+    void Info()  //Book Reservation     
+    {
+         Book books[20] = {Book("Book 1"), Book("Book 2"), Book("Book 3"), Book("Book 4"), Book("Book 5"), Book("Book 6"), Book("Book 7"), Book("Book 8"), Book("Book 9"), Book("Book 10"),Book("Book 11"), Book("Book 12"), Book("Book 13"), Book("Book 14"), Book("Book 15"), Book("Book 16"), Book("Book 17"), Book("Book 18"), Book("Book 19"), Book("Book 20")};
+    int choice;
+    do {
+        cout << "\tSelect an option:" << endl;
+        cout << "\t\t1. Reserve a book" << endl;
+        cout << "\t\t2. Unreserve a book" << endl;
+        cout << "\t\t3. View book status" << endl;
+        cout << "\t\t4. Exit" << endl;
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                cout << "\tEnter the book number to reserve (1-20): ";
+                int num;
+                cin >> num;
+                if (num < 1 || num > 20) {
+                    cout << "\tInvalid book number." << endl;
+                    break;
+                }
+                if (books[num - 1].isReserved()) {
+                    cout << "\t\tThat book is already reserved." << endl;
+                } else {
+                    books[num - 1].reserve();
+                    cout << "\t\tBook reserved successfully." << endl;
+                }
+                break;
+            }
+            case 2: {
+                cout << "\tEnter the book number to unreserve (1-20): ";
+                int num;
+                cin >> num;
+                if (num < 1 || num > 20) {
+                    cout << "\tInvalid book number." << endl;
+                    break;
+                }
+                if (!books[num - 1].isReserved()) {
+                    cout << "T\that book is not currently reserved." << endl;
+                } else {
+                    books[num - 1].unreserve();
+                    cout << "\tBook unreserved successfully." << endl;
+                }
+                break;
+            }
+            case 3: {
+                cout << "\t\tBook status:" << endl;
+                for (int i = 0; i < 20; i++) {
+                    cout << i + 1 << ". " << books[i].get_title() << " - " << (books[i].isReserved() ? "Reserved" : "Available") << endl;
+                }
+                break;
+            }
+            case 4: {
+                cout << "\tGoodbye!" << endl;
+                break;
+            }
+            default: {
+                cout << "\tInvalid choice." << endl;
+                break;
+            }
+        }
+    } while (choice != 4);
+
+    }
+     
+    void fine(){
+    int due_day, due_month, due_year;
+    int return_day, return_month, return_year;
+    float fine_rate = 0.50; // This is the fine rate per day
+    int days_late;
+
+    cout << "\tEnter the due date (DD MM YYYY): ";
+    cin >> due_day >> due_month >> due_year;
+
+    cout << "\tEnter the return date (DD MM YYYY): ";
+    cin >> return_day >> return_month >> return_year;
+
+    // Calculate the difference in days
+    days_late = (return_year - due_year) * 365 + (return_month - due_month) * 30 + (return_day - due_day);
+    
+    // Check if book was returned late or not
+    if (days_late > 0) {
+        float fine = days_late * fine_rate;
+        cout << "\t\tThe book is " << days_late << " days late, and the fine is Rs." << fine << endl;
+    }
+    else {
+        cout << "\t\tThe book was returned on time, and there is no fine." << endl;
+    }
+    }
+ 
+   
+private:
+    
+    string title;
+    string author;
+    string isbn;
+    bool available;
+    string borrowed_by;
+    time_t borrowed_on;   
+    string borrower;
+    bool reserved;
+    bool checkedOut;
+    };
+   
+class BOOK {//Browsing
+    private:
+    string title;
+    string author;
+    string isbn;
+    bool available;
+    string borrowed_by;
+    time_t borrowed_on;
+    bool checkedOut;
+    string borrower;
+
+public:
+    BOOK()=default ;
+    BOOK(string title, string author, string isbn) {
+        this->title = title;
+        this->author = author;
+        this->isbn = isbn;
+    }
+
+
+    void BOOK_info(string title, string author, string isbn) {
+        this->title = title;
+        this->author = author;
+        this->isbn = isbn;
+    }
+
+    string get_title() {
+        return title;
+    }
+
+    string get_author() {
+        return author;
+    }
+
+    string get_isbn() {
+        return isbn;
+    }
+
+    bool is_available() {
+        return available;
+    }
+
+    
+
+void print_book(BOOK book) {
+    cout << book.get_title() << " by " << book.get_author() << " (ISBN: " << book.get_isbn() << ")" << endl;
+}
+
+
+
+    bool is_overdue(int max_days) {
+        if (!available) {
+            time_t now = time(nullptr);
+            double diff = difftime(now, borrowed_on);
+            return (diff > (max_days * 24 * 60 * 60));
+        } else {
+            return false;
+        }
+    }
+
+    
+    void browse(){
+    vector<BOOK> books = {
+    BOOK("\t\tAdvanced Engineering Mathemetics" , "D.G. Zill and W.S. Wright" , "1"),
+    BOOK (" \t\tAdvanced Engineering Mathemetics" ,  "R.K. Jain and Iyengar S.R.K" , "2" ),
+    BOOK (" \t\tAdvanced Engineering Mathemetics"," Greenberg M.","3"), 
+    BOOK ("\t\tHigher Engineering Mathematics" , "Grewal , B.S.","4"), 
+    BOOK( "\t\tEngineering Physics" , "H.K. Malik and A.K. Singh","5"),
+    BOOK("\t\tTextbook of Engineering Physics", "M.C. Jain" , "6"),
+    BOOK("\t\tEngineering Physics"," G. Aruldhas","7"), 
+    BOOK("\t\tEngineering Physics", "Abhijit Nayak" , "8"), 
+    BOOK("\t\tTextbook on Engineering Chemistry", "S. Rattan" ,"9"),
+    BOOK("\t\tEngineering Chemistry", "P.C. Jaain & M. Jain","10"),
+    BOOK("\t\tThe Elements of Physical Chemistry" , "P.W. Atkins" ,"11"),
+    BOOK("\t\tEssentials of Physical Chemistry", "B.S. Bahl , G.D. Tuli , A. Bahl" , "12"),
+    BOOK("\t\tElectrical Engineering Fundamentals", "Vincent DEL TORO " ,"13"),
+    BOOK( "\t\tElectric Circuits by J. Edminister" , "M. Nahvi", "14"),
+    BOOK("\t\tEngineering Circuit Analysis", "Hayt , W.H., Kimmerly" ,"15"),
+    BOOK("\t\tBasic Electrical Engineering" , "Fitzgerald , Arthur Eugene","16"),
+    BOOK(" \t\tC Programming Absolute Beginner's Guide" , "Greg Perry & Dean Miller","17"), 
+    BOOK(" \t\tC: Complete Reference" , "Herbert Schildt ", "18"),
+    BOOK(" \t\tHead First C: A Brain-Friendly Guide", " Griffiths David", "19"), 
+    BOOK(" \t\tC Programming Language", " Brain W. Kernighan" , "20") 
+    };
+
+    cout << "\t\tWelcome to the book search and browsing system!" << endl;
+
+    while (true) {
+        cout << endl << "\tPlease choose an option:\n" << endl;
+        cout << "\t1. Search for a book" << endl;
+        cout << "\t2. Browse all books" << endl;
+        cout << "\t3. Exit" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << endl << "\tPlease enter a search term:" << endl;
+
+            string term;
+            cin >> term;
+
+            vector<BOOK> results;
+
+            for (BOOK book : books) {
+                if (book.get_title().find(term) != string::npos || book.get_author().find(term) != string::npos || book.get_isbn().find(term) != string::npos) {
+                    results.push_back(book);
+                }
+            }
+
+            if (results.size() == 0) {
+                cout << "\t\tNo results found." << endl;
+            } else {
+                cout << endl << "\tSearch results:" << endl;
+
+                for (BOOK book : results) {
+                    print_book(book);
+                }
+            }
+        } else if (choice == 2) {
+            cout << endl << "\tAll books:" << endl;
+
+            for (BOOK book : books) {
+                print_book(book);
+            }
+        } else if (choice == 3) {
+            cout << endl << "\tExiting." << endl;
+            break;
+        } else {
+            cout << endl << "\t\tInvalid choice. Please try again." << endl;
+        }
+    }
+    }
+   };
+
+class BooK {//check in and check out
+private:
+    string title;
+    string author;
+    bool checkedOut;
+
+public:
+BooK()=default ;
+    BooK(string t, string a) {
+        title = t;
+        author = a;
+        checkedOut = false;
+    }
+
+     void book_in(string t , string a ){
+         title = t;
+        author = a;
+        checkedOut = false;
+     }
+
+    void checkOut() {
+        if (checkedOut) {
+            cout << "\tThis book is already checked out." << endl;
+        } else {
+            checkedOut = true;
+            cout << "\tBook checked out successfully." << endl;
+        }
+    }
+
+    void checkIn() {
+        if (!checkedOut) {
+            cout << "\t\tThis book is not currently checked out." << endl;
+        } else {
+            checkedOut = false;
+            cout << "\t\tBook checked in successfully." << endl;
+        }
+    }
+
+    string get_title() {
+        return title;
+    }
+
+    string get_author() {
+        return author;
+    }
+
+    bool isCheckedOut() {
+        return checkedOut;
+    }
+
+
+void Check_in_out() {
+    vector<BooK> librarycheck;
+
+    string title, author;
+    char addAnother = 'y';
+    while (addAnother == 'y') {
+        cout << "\tEnter the title of the book: ";
+        getline(cin, title);
+        cout << "\tEnter the author of the book: ";
+        getline(cin, author);
+
+        librarycheck.push_back(BooK(title, author));
+
+        cout << "\tDo you want to add another book? (y/n): ";
+        cin >> addAnother;
+        cin.ignore();
+    }
+
+    int choice, bookIndex;
+    do {
+        cout << endl << "\t\tBook options:" << endl;
+        for (int i = 0; i < librarycheck.size(); i++) {
+            cout << i+1 << ". " << librarycheck[i].get_title() << " by " << librarycheck[i].get_author();
+            if (librarycheck[i].isCheckedOut()) {
+                cout << " \t(Checked Out)";
+            }
+            cout << endl;
+        }
+        cout << librarycheck.size()+1 << ".\t Quit" << endl;
+        cout << "\tEnter the number of the book you want to check out or check in: ";
+        cin >> choice;
+
+        if (choice >= 1 && choice <= librarycheck.size()) {
+            bookIndex = choice-1;
+            if (librarycheck[bookIndex].isCheckedOut()) {
+                librarycheck[bookIndex].checkIn();
+            } else {
+                librarycheck[bookIndex].checkOut();
+            }
+        } else if (choice == librarycheck.size()+1) {
+            cout << "\t\tGoodbye!" << endl;
+        } else {
+            cout << "\t\tInvalid choice. Please try again." << endl;
+        }
+    } while (choice != librarycheck.size()+1);
+}
+};
+
+class borrow {
+public:
+   
+    
+    string title;
+    string author;
+    string isbn;
+
+    borrow(string title, string author, string isbn) {
+        this->title = title;
+        this->author = author;
+        this->isbn = isbn;
+    }
+
+    
+};
+
+class Library { //add book , delegte book
+private:
+    vector<borrow*> borrowed_books;
+public:
+    void add_book(borrow* book) {
+        borrowed_books.push_back(book);
+    }
+
+    void remove_book(borrow* book) {
+        for (int i = 0; i < borrowed_books.size(); i++) {
+            if (borrowed_books[i] == book) {
+                borrowed_books.erase(borrowed_books.begin() + i);
+                break;
+            }
+        }
+    }
+
+    void display_borrowed_books() {
+        if (borrowed_books.size() == 0) {
+            cout << "\tNo books are currently borrowed." << endl;
+        }
+        else {
+            cout << "\tBorrowed Books:" << endl;
+            for (int i = 0; i < borrowed_books.size(); i++) {
+                cout << borrowed_books[i]->title << " by " << borrowed_books[i]->author << ", ISBN Code" << borrowed_books[i]->isbn << endl;
+            }
+        }
+    }
+
+
+
+    void Borrow(){
+     Library library;
+    while (true) {
+        int choice;
+        cout << "\t1. Borrow a book" << endl;
+        cout << "\t2. Return a book" << endl;
+        cout << "\t3. Display borrowed books" << endl;
+        cout << "\t4. Quit" << endl;
+        cout << "\tEnter your choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            string title, author;
+            string isbn;
+            cout << "\tEnter the title of the book: ";
+            cin >> title;
+            cout << "\tEnter the author of the book: ";
+            cin >> author;
+            cout << "\tEnter the ISBN Code: ";
+            cin >> isbn;
+            borrow* book = new borrow(title, author, isbn);
+            library.add_book(book);
+            cout << "\t\tThe book has been borrowed." << endl;
+        }
+        else if (choice == 2) {
+            string title, author;
+            string isbn;
+            cout << "\tEnter the title of the book: ";
+            cin >> title;
+            cout << "\tEnter the author of the book: ";
+            cin >> author;
+            cout << "\tEnter the ISBN Code: ";
+            cin >> isbn;
+            borrow* book = new borrow(title, author, isbn);
+            library.remove_book(book);
+            cout << "\tThe book has been returned." << endl;
+        }
+        else if (choice == 3) {
+            library.display_borrowed_books();
+        }
+        else if (choice == 4) {
+            break;
+        }
+        else {
+            cout << "\t\tInvalid choice. Please enter a number between 1 and 4." << endl;
+        }
+       }
+       }
+       };
+    
+      
+int main()
+{
+    
+    system("Color F1");
+     LibrarySystem library;
+     Book BookInfo ;
+     admin User;
+     BooK book_in;
+     BOOK BOOK_info;
+     Library Borrowbook; 
+	char ch;
+	int pages;
+    char title , author ;
+	
+   {
+	system("CLS");
+
+	cout<<"\n\n\t\t-------------------------------------------------------------\n";
+	cout<<"\n\t\t              || LIBRARY MANAGEMENT SYSTEM ||     ";
+	cout<<"\n\n\t\t--------------------------------------------------------------\n";
+
+     while (true) {
+        cout<<"\n\t\t                       ::MAIN MENU::\n\n";
+        cout << "\t\t1. Register\n";
+        cout << "\t\t2. Login\n";
+        cout << "\t\t3. Book search and browsing \n";
+        cout << "\t\t4. Book Checkout and Return\n";
+        cout << "\t\t5. Borrowing History\n";
+        cout << "\t\t6. Book Reservation\n";
+        cout << "\t\t7. Fine Calculation\n";
+        cout << "\t\t8. Admin Login & Controls\n";
+        cout << "\t\t9. Recommendation\n";
+        cout << "\t\t10. Book List\n";
+        cout << "\t\t11. Exit\n";
+        int choice;
+        cout << "\n\t\tEnter your choice: ";
+        cin >> choice;
+        cin.ignore(); // ignore any remaining input
+
+
+        switch (choice) {
+        case 1:
+        
+            library.registerUser();  //User Registration
+            break;
+
+
+        case 2:
+            if (library.loginUser()) {  //User Login
+                // do something after successful login
+            }
+            break;
+        
+        
+        case 3:
+            BOOK_info.browse(); //Search and browsing
+            break; 
+
+
+        case 4:
+            book_in.Check_in_out(); //Book Check In and Check Out
+            break;
+
+        
+        case 5:
+            Borrowbook.Borrow(); //Book Borrowing System
+            break; 
+
+        case 6:
+           BookInfo.Info(); //Book Reservation
+            break;
+
+
+        case 7:
+            BookInfo.fine();  //Fine Calculation
+            break;
+        
+
+        case 8:
+            library.adminUser();
+            break;  
+
+
+        case 9:
+            BookInfo.Recommendation();
+            break;    //Book Recommendation
+
+        
+
+        case 10:
+            BookInfo.list();   //Availabe Book List
+            break;                
+
+        
+        case 11:
+            return 0;  //Exit
+
+
+        default:
+            cout << "\t\tInvalid choice.\n";
+            break;
+        }
+     }
+   }
+}
